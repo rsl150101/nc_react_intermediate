@@ -10,14 +10,12 @@ const Box = styled.div`
   height: 100px;
 `;
 
-const Circle = styled(Box)`
-  border-radius: 50px;
-`;
+const Circle = styled(Box).attrs({ className: "circle" })``;
 
 function App() {
   return (
     <Father>
-      <Box bgColor="teal" />
+      <Box as="a" href="/" bgColor="teal" />
       <Circle bgColor="tomato" />
     </Father>
   );
