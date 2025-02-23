@@ -1,24 +1,19 @@
-import React, { useState } from "react";
+import styled from "styled-components";
+
+const Container = styled.div`
+  background-color: ${(props) => props.theme.bgColor};
+`;
+
+const Title = styled.h1`
+  color: ${(props) => props.theme.textColor};
+`;
 
 function App() {
-  const [value, setValue] = useState("");
-
-  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const { value } = event.currentTarget;
-
-    setValue(value);
-  };
-
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-  };
-
   return (
     <div>
-      <form onSubmit={onSubmit}>
-        <input value={value} onChange={onChange} type="text" />
-        <button type="submit">Log in</button>
-      </form>
+      <Container>
+        <Title>Hello</Title>
+      </Container>
     </div>
   );
 }
