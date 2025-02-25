@@ -57,9 +57,21 @@ function Chart() {
               labels: {
                 show: false,
               },
+              type: "datetime",
+              categories: data?.map((price) => price.time_close),
             },
             yaxis: {
               show: false,
+            },
+            fill: {
+              type: "gradient",
+              gradient: { gradientToColors: ["blue"], stops: [0, 100] },
+            },
+            colors: ["red"],
+            tooltip: {
+              y: {
+                formatter: (value) => `$${value.toFixed(2)}`,
+              },
             },
           }}
         />
