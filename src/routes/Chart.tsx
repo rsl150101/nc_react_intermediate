@@ -17,10 +17,11 @@ interface IHistorical {
 
 interface ChartContext {
   coinId: string;
+  isDark: boolean;
 }
 
 function Chart() {
-  const { coinId } = useOutletContext<ChartContext>();
+  const { coinId, isDark } = useOutletContext<ChartContext>();
   const { isLoading, data } = useQuery<IHistorical[]>({
     queryKey: ["ohlcv"],
     queryFn: () => fetchCoinHistory(coinId),
@@ -46,7 +47,7 @@ function Chart() {
               toolbar: { show: false },
               background: "transparent",
             },
-            theme: { mode: "dark" },
+            theme: { mode: isDark ? "dark" : "light" },
             stroke: { curve: "smooth", width: 4 },
             grid: {
               show: false,
