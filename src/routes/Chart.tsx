@@ -3,6 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import ReactApexChart from "react-apexcharts";
 
 import { fetchCoinHistory } from "../api";
+import { useAppSelector } from "../store/hooks";
 
 interface IHistorical {
   time_open: number;
@@ -17,11 +18,12 @@ interface IHistorical {
 
 interface ChartContext {
   coinId: string;
-  isDark: boolean;
 }
 
 function Chart() {
-  const { coinId, isDark } = useOutletContext<ChartContext>();
+  const { coinId } = useOutletContext<ChartContext>();
+  const { isDark } = useAppSelector((state) => state.ui);
+
   const { isLoading, data } = useQuery<IHistorical[]>({
     queryKey: ["ohlcv"],
     queryFn: () => fetchCoinHistory(coinId),
