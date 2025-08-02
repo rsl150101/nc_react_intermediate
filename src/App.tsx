@@ -1,9 +1,4 @@
-import { createGlobalStyle, ThemeProvider } from "styled-components";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-import Router from "./Router";
-import { darkTheme, lightTheme } from "./theme";
-import { useAppSelector } from "./store/hooks";
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
@@ -68,14 +63,9 @@ a {
 `;
 
 function App() {
-  const { isDark } = useAppSelector((state) => state.ui);
   return (
     <>
-      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-        <GlobalStyle />
-        <Router />
-        <ReactQueryDevtools initialIsOpen={true} />
-      </ThemeProvider>
+      <GlobalStyle />
     </>
   );
 }
