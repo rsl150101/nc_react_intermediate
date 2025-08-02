@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import { fetchCoins } from "../api";
+import { useAppDispatch } from "../store/hooks";
+import { toggleDark } from "../reducers/ui";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -68,11 +70,17 @@ function Coins() {
     queryKey: ["allCoins"],
     queryFn: fetchCoins,
   });
+  const dispatch = useAppDispatch();
+
+  const toggleDarkModeBtn = () => {
+    dispatch(toggleDark());
+  };
 
   return (
     <Container>
       <Header>
         <Title>Coin</Title>
+        <button onClick={toggleDarkModeBtn}>Toggle Mode</button>
       </Header>
       {isLoading ? (
         <Loader>Loading...</Loader>

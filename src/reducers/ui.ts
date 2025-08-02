@@ -11,7 +11,13 @@ export const initialState: UiState = {
 const uiSlice = createSlice({
   name: "ui",
   initialState,
-  reducers: {},
+  reducers: {
+    toggleDark: (state) => {
+      state.isDark = !state.isDark;
+    },
+  },
 });
+
+export const { toggleDark } = uiSlice.actions;
 
 export default uiSlice.reducer;
