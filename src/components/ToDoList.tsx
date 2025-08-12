@@ -1,5 +1,7 @@
-import React from "react";
 import { useForm } from "react-hook-form";
+
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { addToDo } from "../reducers/toDo";
 
 interface IForm {
   toDo: string;
@@ -7,8 +9,11 @@ interface IForm {
 
 function ToDoList() {
   const { register, handleSubmit, setValue } = useForm<IForm>();
+  const toDos = useAppSelector((state) => state.toDo);
+  const dispatch = useAppDispatch();
 
   const onValid = (data: IForm) => {
+    dispatch(addToDo({ text: data.toDo, category: "TO_DO" }));
     setValue("toDo", "");
   };
 
@@ -25,7 +30,11 @@ function ToDoList() {
         />
         <button>Add</button>
       </form>
-      <ul></ul>
+      <ul>
+        {toDos.map((toDo) => (
+          <li key={toDo.id}>{toDo.text}</li>
+        ))}
+      </ul>
     </div>
   );
 }
