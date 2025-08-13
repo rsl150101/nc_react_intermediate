@@ -1,12 +1,32 @@
+import React from "react";
+
 import { ToDoState } from "../reducers/toDo";
 
 function ToDo(toDo: ToDoState) {
+  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const {
+      currentTarget: { name },
+    } = e;
+  };
+
   return (
     <li>
       <span>{toDo.text}</span>
-      <button>Doing</button>
-      <button>To Do</button>
-      <button>Done</button>
+      {toDo.category !== "DOING" && (
+        <button name="DOING" onClick={onClick}>
+          Doing
+        </button>
+      )}
+      {toDo.category !== "TO_DO" && (
+        <button name="TO_DO" onClick={onClick}>
+          To Do
+        </button>
+      )}
+      {toDo.category !== "DONE" && (
+        <button name="DONE" onClick={onClick}>
+          Done
+        </button>
+      )}
     </li>
   );
 }
