@@ -1,12 +1,19 @@
 import React from "react";
 
-import { ToDoState } from "../reducers/toDo";
+import { setCategory, ToDoState } from "../reducers/toDo";
+import { useAppDispatch } from "../store/hooks";
 
 function ToDo(toDo: ToDoState) {
+  const dispatch = useAppDispatch();
+
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const {
       currentTarget: { name },
     } = e;
+
+    dispatch(
+      setCategory({ id: toDo.id, category: name as ToDoState["category"] })
+    );
   };
 
   return (
