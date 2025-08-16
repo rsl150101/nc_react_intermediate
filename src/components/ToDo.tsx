@@ -1,9 +1,9 @@
 import React from "react";
 
-import { setCategory, ToDoState } from "../reducers/toDo";
+import { changeCategory, IToDo } from "../reducers/toDo";
 import { useAppDispatch } from "../store/hooks";
 
-function ToDo(toDo: ToDoState) {
+function ToDo(toDo: IToDo) {
   const dispatch = useAppDispatch();
 
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -12,7 +12,7 @@ function ToDo(toDo: ToDoState) {
     } = e;
 
     dispatch(
-      setCategory({ id: toDo.id, category: name as ToDoState["category"] })
+      changeCategory({ id: toDo.id, category: name as IToDo["category"] })
     );
   };
 
