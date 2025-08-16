@@ -1,39 +1,38 @@
-import { selectToDosByCategory } from "../reducers/toDo";
-import { useAppSelector } from "../store/hooks";
+import React from "react";
+
+import {
+  Category,
+  selectToDosByCategory,
+  setCurCategory,
+} from "../reducers/toDo";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import CreateToDo from "./CreateToDo";
 import ToDo from "./ToDo";
 
 function ToDoList() {
-  const [toDo, doing, done] = useAppSelector(selectToDosByCategory);
+  const toDos = useAppSelector(selectToDosByCategory);
+  const category = useAppSelector((state) => state.toDo.curCategory);
+  const dispatch = useAppDispatch();
 
-  console.log(toDo, doing, done);
+  const onInput = (e: React.FormEvent<HTMLSelectElement>) => {
+    dispatch(setCurCategory(e.currentTarget.value as Category));
+  };
 
   return (
     <div>
       <h1>To Dos</h1>
       <hr />
+      <select value={category} onInput={onInput}>
+        <option value="TO_DO">To Do</option>
+        <option value="DOING">Doing</option>
+        <option value="DONE">Done</option>
+      </select>
       <CreateToDo />
-      <h2>To Do</h2>
       <ul>
-        {toDo.map((toDo) => (
+        {toDos.map((toDo) => (
           <ToDo key={toDo.id} {...toDo} />
         ))}
       </ul>
-      <hr />
-      <h2>Doing</h2>
-      <ul>
-        {doing.map((toDo) => (
-          <ToDo key={toDo.id} {...toDo} />
-        ))}
-      </ul>
-      <hr />
-      <h2>Done</h2>
-      <ul>
-        {done.map((toDo) => (
-          <ToDo key={toDo.id} {...toDo} />
-        ))}
-      </ul>
-      <hr />
     </div>
   );
 }
