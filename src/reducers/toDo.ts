@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../store/configureStore";
 
 export interface ToDoState {
   id: number;
@@ -28,6 +29,14 @@ const toDoSlice = createSlice({
     },
   },
 });
+
+const selectToDos = (state: RootState) => state.toDo;
+
+export const selectToDosByCategory = createSelector(selectToDos, (toDos) => [
+  toDos.filter((toDo) => toDo.category === "TO_DO"),
+  toDos.filter((toDo) => toDo.category === "DOING"),
+  toDos.filter((toDo) => toDo.category === "DONE"),
+]);
 
 export const { addToDo, setCategory } = toDoSlice.actions;
 
