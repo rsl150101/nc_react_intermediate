@@ -2,7 +2,11 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { RootState } from "../store/configureStore";
 
-export type Category = "TO_DO" | "DOING" | "DONE";
+export enum Category {
+  "TO_DO" = "TO_DO",
+  "DOING" = "DOING",
+  "DONE" = "DONE",
+}
 
 export interface IToDo {
   id: number;
@@ -17,7 +21,7 @@ export interface ToDoState {
 
 const initialState: ToDoState = {
   toDos: [],
-  curCategory: "TO_DO",
+  curCategory: Category.TO_DO,
 };
 
 const toDoSlice = createSlice({

@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addToDo } from "../reducers/toDo";
 
 interface IForm {
@@ -9,11 +9,12 @@ interface IForm {
 
 function CreateToDo() {
   const { register, handleSubmit, setValue } = useForm<IForm>();
+  const category = useAppSelector((state) => state.toDo.curCategory);
 
   const dispatch = useAppDispatch();
 
   const onValid = (data: IForm) => {
-    dispatch(addToDo({ text: data.toDo, category: "TO_DO" }));
+    dispatch(addToDo({ text: data.toDo, category }));
     setValue("toDo", "");
   };
 

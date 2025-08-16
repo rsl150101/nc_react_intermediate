@@ -1,6 +1,6 @@
 import React from "react";
 
-import { changeCategory, IToDo } from "../reducers/toDo";
+import { Category, changeCategory, IToDo } from "../reducers/toDo";
 import { useAppDispatch } from "../store/hooks";
 
 function ToDo(toDo: IToDo) {
@@ -19,18 +19,18 @@ function ToDo(toDo: IToDo) {
   return (
     <li>
       <span>{toDo.text}</span>
-      {toDo.category !== "DOING" && (
-        <button name="DOING" onClick={onClick}>
+      {toDo.category !== Category.DOING && (
+        <button name={Category.DOING} onClick={onClick}>
           Doing
         </button>
       )}
-      {toDo.category !== "TO_DO" && (
-        <button name="TO_DO" onClick={onClick}>
+      {toDo.category !== Category.TO_DO && (
+        <button name={Category.TO_DO} onClick={onClick}>
           To Do
         </button>
       )}
-      {toDo.category !== "DONE" && (
-        <button name="DONE" onClick={onClick}>
+      {toDo.category !== Category.DONE && (
+        <button name={Category.DONE} onClick={onClick}>
           Done
         </button>
       )}

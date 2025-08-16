@@ -23,9 +23,9 @@ function ToDoList() {
       <h1>To Dos</h1>
       <hr />
       <select value={category} onInput={onInput}>
-        <option value="TO_DO">To Do</option>
-        <option value="DOING">Doing</option>
-        <option value="DONE">Done</option>
+        <option value={Category.TO_DO}>To Do</option>
+        <option value={Category.DOING}>Doing</option>
+        <option value={Category.DONE}>Done</option>
       </select>
       <CreateToDo />
       <ul>
