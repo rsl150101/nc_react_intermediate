@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { createGlobalStyle } from "styled-components";
 
 import App from "./App";
-import { lightTheme } from "./theme";
+import { theme } from "./theme";
 import { store } from "./store/configureStore";
 
 const GlobalStyle = createGlobalStyle`
@@ -60,9 +60,11 @@ table {
   box-sizing: border-box;
 }
 body {
+  font-weight: 300;
   font-family: "Open Sans", serif;
   background-color:${(props) => props.theme.bgColor};
-  color:${(props) => props.theme.textColor}
+  color:black;
+  line-height:1.2;
 }
 a {
   text-decoration:none;
@@ -76,7 +78,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ThemeProvider theme={lightTheme}>
+      <ThemeProvider theme={theme}>
         <GlobalStyle />
         <App />
       </ThemeProvider>

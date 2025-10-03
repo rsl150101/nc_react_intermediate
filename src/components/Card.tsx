@@ -1,7 +1,19 @@
-import { draggable } from "@atlaskit/pragmatic-drag-and-drop/dist/types/adapter/element-adapter";
+import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { useEffect, useRef } from "react";
+import styled from "styled-components";
 
-const Card = () => {
+interface CardProps {
+  content: string;
+}
+
+const CardDiv = styled.div`
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 10px;
+  background-color: ${(props) => props.theme.cardColor};
+`;
+
+const Card = ({ content }: CardProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -11,7 +23,7 @@ const Card = () => {
       element: ref.current,
     });
   }, []);
-  return <div ref={ref}></div>;
+  return <CardDiv ref={ref}>{content}</CardDiv>;
 };
 
 export default Card;
