@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import styled from "styled-components";
 import Card from "./Card";
+import { useAppSelector } from "../store/hooks";
 
 const BoardDiv = styled.div`
   padding: 30px 10px 20px 10px;
@@ -10,10 +11,9 @@ const BoardDiv = styled.div`
   min-height: 200px;
 `;
 
-const toDos = ["a", "b", "c", "d", "e", "f"];
-
 const Board = () => {
   const ref = useRef<HTMLDivElement>(null);
+  const toDos = useAppSelector((state) => state.toDo);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -21,10 +21,11 @@ const Board = () => {
       element: ref.current,
     });
   }, []);
+
   return (
     <BoardDiv ref={ref}>
       {toDos.map((toDo) => (
-        <Card key={toDo} content={toDo} />
+        <Card key={toDo.id} content={toDo.content} />
       ))}
     </BoardDiv>
   );

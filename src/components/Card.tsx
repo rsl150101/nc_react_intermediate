@@ -23,6 +23,7 @@ const Card = ({ content }: CardProps) => {
       element: ref.current,
     });
   }, []);
+
   return <CardDiv ref={ref}>{content}</CardDiv>;
 };
 
