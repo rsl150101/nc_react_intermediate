@@ -2,7 +2,7 @@ import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useAppDispatch } from "../store/hooks";
 import { moveToDo, MoveToDoState } from "../reducers/toDo";
@@ -58,4 +58,4 @@ const Card = ({ index, content }: CardProps) => {
   return <CardDiv ref={ref}>{content}</CardDiv>;
 };
 
-export default Card;
+export default React.memo(Card);
