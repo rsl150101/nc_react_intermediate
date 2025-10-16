@@ -1,9 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 
 export interface ToDoState {
   id: string;
   content: string;
+}
+
+export interface MoveToDoState {
+  targetIndex: number;
+  curIndex: number;
 }
 
 const initialState: ToDoState[] = [
@@ -36,9 +41,15 @@ const initialState: ToDoState[] = [
 const toDoSlice = createSlice({
   name: "toDo",
   initialState,
-  reducers: {},
+  reducers: {
+    moveToDo: (state, action: PayloadAction<MoveToDoState>) => {
+      const { targetIndex, curIndex } = action.payload;
+      const draggedToDo = state.splice(curIndex, 1)[0];
+      state.splice(targetIndex, 0, draggedToDo);
+    },
+  },
 });
 
-export const {} = toDoSlice.actions;
+export const { moveToDo } = toDoSlice.actions;
 
 export default toDoSlice.reducer;
