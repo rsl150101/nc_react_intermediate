@@ -11,12 +11,14 @@ interface ToDosState {
 }
 
 export interface MoveToDoState {
-  targetIndex: number;
-  curIndex: number;
+  dragBoardId: string;
+  targetBoardId?: string;
+  targetCardIndex: number;
+  dragCardIndex: number;
 }
 
 const initialState: ToDosState = {
-  to_do: [
+  "to do": [
     {
       id: uuidv4(),
       content: "a",
@@ -52,15 +54,14 @@ const toDoSlice = createSlice({
   name: "toDo",
   initialState,
   reducers: {
-    moveToDo: (state, action: PayloadAction<MoveToDoState>) => {
-      //todo 7.8 싱글보드에서 멀티보드로 구현하면서 로직 수정 필요함
-      // const { targetIndex, curIndex } = action.payload;
-      // const draggedToDo = state.splice(curIndex, 1)[0];
-      // state.splice(targetIndex, 0, draggedToDo);
+    moveToDoOnSameBoard: (state, action: PayloadAction<MoveToDoState>) => {
+      const { dragBoardId, targetCardIndex, dragCardIndex } = action.payload;
+      const dragToDo = state[dragBoardId].splice(dragCardIndex, 1)[0];
+      state[dragBoardId].splice(targetCardIndex, 0, dragToDo);
     },
   },
 });
 
-export const { moveToDo } = toDoSlice.actions;
+export const { moveToDoOnSameBoard } = toDoSlice.actions;
 
 export default toDoSlice.reducer;

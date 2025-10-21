@@ -4,15 +4,16 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
+
 import { useAppDispatch } from "../store/hooks";
-import { moveToDo, MoveToDoState } from "../reducers/toDo";
+import { moveToDoOnSameBoard } from "../reducers/toDo";
+import { BOARDDROPTYPE, CARDDROPTYPE } from "../constants/dnd";
+import { findDropTarget, typedData } from "../utils/dnd";
 
 interface CardProps {
   index: number;
   content: string;
 }
-
-const CARDDROPTYPE = "CardDropTarget";
 
 const CardDiv = styled.div`
   border-radius: 5px;
@@ -30,7 +31,9 @@ const Card = ({ index, content }: CardProps) => {
 
     return draggable({
       element: ref.current,
-      getInitialData: (): { curIndex: number } => ({ curIndex: index }),
+      getInitialData: (): { dragCardIndex: number } => ({
+        dragCardIndex: index,
+      }),
     });
   }, [index]);
 
@@ -39,18 +42,41 @@ const Card = ({ index, content }: CardProps) => {
 
     return dropTargetForElements({
       element: ref.current,
-      getData: () => ({ type: CARDDROPTYPE, targetIndex: index }),
+      getData: () => ({ type: CARDDROPTYPE, targetCardIndex: index }),
       onDrop: ({ source, location }) => {
-        const target = location.current.dropTargets.find(
-          (t) => t.data.type === CARDDROPTYPE
+        const targetCard = findDropTarget<{ targetCardIndex: number }>(
+          location.current.dropTargets,
+          CARDDROPTYPE
+        );
+        const targetBoard = findDropTarget<{ boardId: string }>(
+          location.current.dropTargets,
+          BOARDDROPTYPE
+        );
+        const dragBoard = findDropTarget<{ boardId: string }>(
+          location.initial.dropTargets,
+          BOARDDROPTYPE
         );
 
-        if (!target) return;
+        if (!targetCard || !targetBoard || !dragBoard) return;
 
-        const { targetIndex } = target.data;
-        const { curIndex } = source.data;
+        const { targetCardIndex } = targetCard;
+        const { dragCardIndex } = typedData<{ dragCardIndex: number }>(
+          source.data
+        );
+        const { boardId: targetBoardId } = targetBoard;
+        const { boardId: dragBoardId } = dragBoard;
 
-        dispatch(moveToDo({ targetIndex, curIndex } as MoveToDoState));
+        if (targetBoardId === dragBoardId) {
+          if (targetCardIndex !== dragCardIndex) {
+            dispatch(
+              moveToDoOnSameBoard({
+                dragBoardId,
+                targetCardIndex,
+                dragCardIndex,
+              })
+            );
+          }
+        }
       },
     });
   }, [index, dispatch]);
