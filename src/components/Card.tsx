@@ -7,8 +7,13 @@ import styled from "styled-components";
 
 import { useAppDispatch } from "../store/hooks";
 import { moveToDoOnSameBoard } from "../reducers/toDo";
-import { BOARDDROPTYPE, CARDDROPTYPE } from "../constants/dnd";
-import { findDropTarget, typedData } from "../utils/dnd";
+import { findDropTarget } from "../utils/dnd/findTarget";
+import { createDragCardData, createDropCardData } from "../utils/dnd/creator";
+import {
+  isBoardData,
+  isDragCardData,
+  isDropCardData,
+} from "../utils/dnd/guards";
 
 interface CardProps {
   index: number;
@@ -31,9 +36,7 @@ const Card = ({ index, content }: CardProps) => {
 
     return draggable({
       element: ref.current,
-      getInitialData: (): { dragCardIndex: number } => ({
-        dragCardIndex: index,
-      }),
+      getInitialData: () => createDragCardData(index),
     });
   }, [index]);
 
@@ -42,40 +45,40 @@ const Card = ({ index, content }: CardProps) => {
 
     return dropTargetForElements({
       element: ref.current,
-      getData: () => ({ type: CARDDROPTYPE, targetCardIndex: index }),
+      getData: () => createDropCardData(index),
       onDrop: ({ source, location }) => {
-        const targetCard = findDropTarget<{ targetCardIndex: number }>(
+        const targetCard = findDropTarget(
           location.current.dropTargets,
-          CARDDROPTYPE
+          isDropCardData
         );
-        const targetBoard = findDropTarget<{ boardId: string }>(
+        const targetBoard = findDropTarget(
           location.current.dropTargets,
-          BOARDDROPTYPE
+          isBoardData
         );
-        const dragBoard = findDropTarget<{ boardId: string }>(
+        const dragBoard = findDropTarget(
           location.initial.dropTargets,
-          BOARDDROPTYPE
+          isBoardData
         );
 
         if (!targetCard || !targetBoard || !dragBoard) return;
+        if (!isDragCardData(source.data)) return;
 
         const { targetCardIndex } = targetCard;
-        const { dragCardIndex } = typedData<{ dragCardIndex: number }>(
-          source.data
-        );
+        const { dragCardIndex } = source.data;
         const { boardId: targetBoardId } = targetBoard;
         const { boardId: dragBoardId } = dragBoard;
 
-        if (targetBoardId === dragBoardId) {
-          if (targetCardIndex !== dragCardIndex) {
-            dispatch(
-              moveToDoOnSameBoard({
-                dragBoardId,
-                targetCardIndex,
-                dragCardIndex,
-              })
-            );
-          }
+        if (
+          targetBoardId === dragBoardId &&
+          targetCardIndex !== dragCardIndex
+        ) {
+          dispatch(
+            moveToDoOnSameBoard({
+              dragBoardId,
+              targetCardIndex,
+              dragCardIndex,
+            })
+          );
         }
       },
     });

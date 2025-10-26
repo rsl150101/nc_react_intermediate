@@ -4,7 +4,9 @@ import { useEffect, useRef } from "react";
 
 import Card from "./Card";
 import { CardState } from "../reducers/toDo";
-import { BOARDDROPTYPE } from "../constants/dnd";
+import { createBoardData } from "../utils/dnd/creator";
+import { findDropTarget } from "../utils/dnd/findTarget";
+import { isBoardData } from "../utils/dnd/guards";
 
 const BoardDiv = styled.div`
   padding: 30px 10px 20px 10px;
@@ -33,11 +35,9 @@ const Board = ({ boardId, toDos }: BoardProps) => {
 
     return dropTargetForElements({
       element: ref.current,
-      getData: () => ({ type: BOARDDROPTYPE, boardId }),
+      getData: () => createBoardData(boardId),
       onDrop: ({ location }) => {
-        const board = location.current.dropTargets.find(
-          (t) => t.data.type === BOARDDROPTYPE
-        );
+        const board = findDropTarget(location.current.dropTargets, isBoardData);
 
         if (!board) return;
       },
