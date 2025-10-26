@@ -3,10 +3,11 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { useEffect, useRef } from "react";
 
 import Card from "./Card";
-import { CardState } from "../reducers/toDo";
+import { CardState, pushToDoToAnotherBoard } from "../reducers/toDo";
 import { createBoardData } from "../utils/dnd/creator";
 import { findDropTarget } from "../utils/dnd/findTarget";
-import { isBoardData } from "../utils/dnd/guards";
+import { isBoardData, isDragCardData } from "../utils/dnd/guards";
+import { useAppDispatch } from "../store/hooks";
 
 const BoardDiv = styled.div`
   padding: 30px 10px 20px 10px;
@@ -30,19 +31,47 @@ interface BoardProps {
 
 const Board = ({ boardId, toDos }: BoardProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     if (!ref.current) return;
 
     return dropTargetForElements({
       element: ref.current,
       getData: () => createBoardData(boardId),
-      onDrop: ({ location }) => {
-        const board = findDropTarget(location.current.dropTargets, isBoardData);
+      onDrop: ({ source, location }) => {
+        const targetBoard = findDropTarget(
+          location.current.dropTargets,
+          isBoardData
+        );
+        const dragBoard = findDropTarget(
+          location.initial.dropTargets,
+          isBoardData
+        );
+        const targetCard = findDropTarget(
+          location.current.dropTargets,
+          isDragCardData
+        );
 
-        if (!board) return;
+        if (!targetBoard || !dragBoard || targetCard) return;
+        if (!isDragCardData(source.data)) return;
+
+        const { dragCardIndex } = source.data;
+        const { boardId: targetBoardId } = targetBoard;
+        const { boardId: dragBoardId } = dragBoard;
+
+        if (targetBoardId !== dragBoardId) {
+          dispatch(
+            pushToDoToAnotherBoard({
+              targetBoardId,
+              dragBoardId,
+              dragCardIndex,
+            })
+          );
+        }
       },
     });
-  }, [boardId]);
+  }, [boardId, dispatch]);
 
   return (
     <BoardDiv ref={ref}>

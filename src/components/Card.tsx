@@ -6,7 +6,7 @@ import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 import { useAppDispatch } from "../store/hooks";
-import { moveToDoOnSameBoard } from "../reducers/toDo";
+import { moveToDoOnAnotherBoard, moveToDoOnSameBoard } from "../reducers/toDo";
 import { findDropTarget } from "../utils/dnd/findTarget";
 import { createDragCardData, createDropCardData } from "../utils/dnd/creator";
 import {
@@ -75,6 +75,15 @@ const Card = ({ index, content }: CardProps) => {
           dispatch(
             moveToDoOnSameBoard({
               dragBoardId,
+              targetCardIndex,
+              dragCardIndex,
+            })
+          );
+        } else if (targetBoardId !== dragBoardId) {
+          dispatch(
+            moveToDoOnAnotherBoard({
+              dragBoardId,
+              targetBoardId,
               targetCardIndex,
               dragCardIndex,
             })
