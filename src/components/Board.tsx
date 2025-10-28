@@ -3,11 +3,12 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { useEffect, useRef } from "react";
 
 import Card from "./Card";
-import { CardState, pushToDoToAnotherBoard } from "../reducers/toDo";
+import { CardState } from "../reducers/toDo";
 import { createBoardData } from "../utils/dnd/creator";
-import { findDropTarget } from "../utils/dnd/findTarget";
-import { isBoardData, isDragCardData } from "../utils/dnd/guards";
 import { useAppDispatch } from "../store/hooks";
+import { handleDrop } from "../utils/dnd/handleDrop";
+import { findDropTarget } from "../utils/dnd/findTarget";
+import { isDropCardData } from "../utils/dnd/guards";
 
 const BoardDiv = styled.div`
   padding: 30px 10px 20px 10px;
@@ -39,36 +40,15 @@ const Board = ({ boardId, toDos }: BoardProps) => {
     return dropTargetForElements({
       element: ref.current,
       getData: () => createBoardData(boardId),
-      onDrop: ({ source, location }) => {
-        const targetBoard = findDropTarget(
-          location.current.dropTargets,
-          isBoardData
-        );
-        const dragBoard = findDropTarget(
-          location.initial.dropTargets,
-          isBoardData
-        );
+      onDrop: (event) => {
         const targetCard = findDropTarget(
-          location.current.dropTargets,
-          isDragCardData
+          event.location.current.dropTargets,
+          isDropCardData
         );
 
-        if (!targetBoard || !dragBoard || targetCard) return;
-        if (!isDragCardData(source.data)) return;
+        if (targetCard) return;
 
-        const { dragCardIndex } = source.data;
-        const { boardId: targetBoardId } = targetBoard;
-        const { boardId: dragBoardId } = dragBoard;
-
-        if (targetBoardId !== dragBoardId) {
-          dispatch(
-            pushToDoToAnotherBoard({
-              targetBoardId,
-              dragBoardId,
-              dragCardIndex,
-            })
-          );
-        }
+        handleDrop(event, dispatch);
       },
     });
   }, [boardId, dispatch]);

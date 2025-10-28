@@ -6,14 +6,8 @@ import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 import { useAppDispatch } from "../store/hooks";
-import { moveToDoOnAnotherBoard, moveToDoOnSameBoard } from "../reducers/toDo";
-import { findDropTarget } from "../utils/dnd/findTarget";
 import { createDragCardData, createDropCardData } from "../utils/dnd/creator";
-import {
-  isBoardData,
-  isDragCardData,
-  isDropCardData,
-} from "../utils/dnd/guards";
+import { handleDrop } from "../utils/dnd/handleDrop";
 
 interface CardProps {
   index: number;
@@ -46,49 +40,8 @@ const Card = ({ index, content }: CardProps) => {
     return dropTargetForElements({
       element: ref.current,
       getData: () => createDropCardData(index),
-      onDrop: ({ source, location }) => {
-        const targetCard = findDropTarget(
-          location.current.dropTargets,
-          isDropCardData
-        );
-        const targetBoard = findDropTarget(
-          location.current.dropTargets,
-          isBoardData
-        );
-        const dragBoard = findDropTarget(
-          location.initial.dropTargets,
-          isBoardData
-        );
-
-        if (!targetCard || !targetBoard || !dragBoard) return;
-        if (!isDragCardData(source.data)) return;
-
-        const { targetCardIndex } = targetCard;
-        const { dragCardIndex } = source.data;
-        const { boardId: targetBoardId } = targetBoard;
-        const { boardId: dragBoardId } = dragBoard;
-
-        if (
-          targetBoardId === dragBoardId &&
-          targetCardIndex !== dragCardIndex
-        ) {
-          dispatch(
-            moveToDoOnSameBoard({
-              dragBoardId,
-              targetCardIndex,
-              dragCardIndex,
-            })
-          );
-        } else if (targetBoardId !== dragBoardId) {
-          dispatch(
-            moveToDoOnAnotherBoard({
-              dragBoardId,
-              targetBoardId,
-              targetCardIndex,
-              dragCardIndex,
-            })
-          );
-        }
+      onDrop: (event) => {
+        handleDrop(event, dispatch);
       },
     });
   }, [index, dispatch]);

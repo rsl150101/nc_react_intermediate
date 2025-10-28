@@ -80,7 +80,6 @@ const toDoSlice = createSlice({
     ) => {
       const { dragBoardId, targetBoardId, targetCardIndex, dragCardIndex } =
         action.payload;
-      if (!targetBoardId) return;
       const dragToDo = state[dragBoardId].splice(dragCardIndex, 1)[0];
       state[targetBoardId].splice(targetCardIndex, 0, dragToDo);
     },
