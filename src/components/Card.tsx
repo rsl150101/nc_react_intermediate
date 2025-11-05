@@ -20,7 +20,11 @@ const CardDiv = styled.div<{ $isDraggedOver: boolean; $isDraggedFromThis: boolea
   margin-bottom: 5px;
   padding: 10px;
   background-color: ${(props) =>
-    props.$isDraggedOver ? "yellow" : props.$isDraggedFromThis ? "green" : props.theme.cardColor};
+    props.$isDraggedOver
+      ? "#d7e3fc"
+      : props.$isDraggedFromThis
+      ? "#c7f9cc"
+      : props.theme.cardColor};
 `;
 
 const Card = ({ index, content }: CardProps) => {

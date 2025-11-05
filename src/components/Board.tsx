@@ -20,6 +20,7 @@ const BoardDiv = styled.div`
   min-height: 200px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 `;
 
 const Title = styled.h2`
@@ -32,8 +33,14 @@ const Title = styled.h2`
 
 const Area = styled.div<{ $isDraggedOver: boolean; $isDraggedFromThis: boolean }>`
   background-color: ${(props) =>
-    props.$isDraggedOver ? "pink" : props.$isDraggedFromThis ? "red" : props.theme.boardColor};
+    props.$isDraggedOver
+      ? "#ced4da"
+      : props.$isDraggedFromThis
+      ? "#adb5bd"
+      : props.theme.boardColor};
   flex-grow: 1;
+  padding: 10px;
+  border-radius: 5px;
 `;
 
 interface BoardProps {
