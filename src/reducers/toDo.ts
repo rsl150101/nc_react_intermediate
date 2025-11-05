@@ -55,27 +55,21 @@ const toDoSlice = createSlice({
   initialState,
   reducers: {
     moveCard: (state, action: PayloadAction<MoveCardPayload>) => {
-      const { dragBoardId, dragCardIndex, targetBoardId, targetCardIndex } =
-        action.payload;
+      const { dragBoardId, dragCardIndex, targetBoardId, targetCardIndex } = action.payload;
       const sourceBoard = state[dragBoardId];
       const destBoard = state[targetBoardId];
 
       if (!sourceBoard || !destBoard) return;
       if (
         dragBoardId === targetBoardId &&
-        (dragCardIndex === targetCardIndex ||
-          dragCardIndex + 1 === targetCardIndex)
+        (dragCardIndex === targetCardIndex || dragCardIndex + 1 === targetCardIndex)
       )
         return;
 
       const [dragCard] = sourceBoard.splice(dragCardIndex, 1);
 
       let insertIndex = targetCardIndex ?? destBoard.length;
-      if (
-        dragBoardId === targetBoardId &&
-        dragCardIndex < insertIndex &&
-        targetCardIndex
-      ) {
+      if (dragBoardId === targetBoardId && dragCardIndex < insertIndex && targetCardIndex) {
         insertIndex -= 1;
       }
 
