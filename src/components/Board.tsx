@@ -4,6 +4,7 @@ import {
   monitorForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 
 import Card from "./Card";
 import { CardState } from "../reducers/toDo";
@@ -43,9 +44,20 @@ const Area = styled.div<{ $isDraggedOver: boolean; $isDraggedFromThis: boolean }
   border-radius: 5px;
 `;
 
+const AddForm = styled.form`
+  width: 100%;
+  input {
+    width: 100%;
+  }
+`;
+
 interface BoardProps {
   boardId: string;
   toDos: CardState[];
+}
+
+interface ToDoAddForm {
+  toDo: string;
 }
 
 const Board = ({ boardId, toDos }: BoardProps) => {
@@ -53,6 +65,7 @@ const Board = ({ boardId, toDos }: BoardProps) => {
   const dispatch = useAppDispatch();
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const [isDraggedFromThis, setIsDraggedFromThis] = useState(false);
+  const { register, setValue, handleSubmit } = useForm<ToDoAddForm>();
 
   useEffect(() => {
     if (!ref.current) return;
@@ -82,9 +95,20 @@ const Board = ({ boardId, toDos }: BoardProps) => {
     });
   }, []);
 
+  const onValid = ({ toDo }: ToDoAddForm) => {
+    setValue("toDo", "");
+  };
+
   return (
     <BoardDiv ref={ref}>
       <Title>{boardId}</Title>
+      <AddForm onSubmit={handleSubmit(onValid)}>
+        <input
+          {...register("toDo", { required: true })}
+          type="text"
+          placeholder={`Add task on ${boardId}`}
+        />
+      </AddForm>
       <Area $isDraggedOver={isDraggedOver} $isDraggedFromThis={isDraggedFromThis}>
         {toDos.map((toDo, index) => (
           <Card key={toDo.id} index={index} content={toDo.content} />
