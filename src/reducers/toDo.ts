@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid";
 
 export interface CardState {
   id: string;
@@ -17,37 +16,15 @@ export interface MoveCardPayload {
   targetCardIndex?: number;
 }
 
+interface AddToDoPayload {
+  newToDo: CardState;
+  boardId: string;
+}
+
 const initialState: ToDosState = {
-  "to do": [
-    {
-      id: uuidv4(),
-      content: "a",
-    },
-    {
-      id: uuidv4(),
-      content: "b",
-    },
-  ],
-  doing: [
-    {
-      id: uuidv4(),
-      content: "c",
-    },
-    {
-      id: uuidv4(),
-      content: "d",
-    },
-    {
-      id: uuidv4(),
-      content: "e",
-    },
-  ],
-  done: [
-    {
-      id: uuidv4(),
-      content: "f",
-    },
-  ],
+  "to do": [],
+  doing: [],
+  done: [],
 };
 
 const toDoSlice = createSlice({
@@ -75,9 +52,16 @@ const toDoSlice = createSlice({
 
       destBoard.splice(insertIndex, 0, dragCard);
     },
+    addToDo: (state, action: PayloadAction<AddToDoPayload>) => {
+      const { newToDo, boardId } = action.payload;
+
+      if (!newToDo || !boardId) return;
+
+      state[boardId].unshift(newToDo);
+    },
   },
 });
 
-export const { moveCard } = toDoSlice.actions;
+export const { moveCard, addToDo } = toDoSlice.actions;
 
 export default toDoSlice.reducer;

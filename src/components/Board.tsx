@@ -5,9 +5,10 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 import Card from "./Card";
-import { CardState } from "../reducers/toDo";
+import { addToDo, CardState } from "../reducers/toDo";
 import { createBoardData } from "../utils/dnd/creator";
 import { useAppDispatch } from "../store/hooks";
 import { handleDrop } from "../utils/dnd/handleDrop";
@@ -96,6 +97,8 @@ const Board = ({ boardId, toDos }: BoardProps) => {
   }, []);
 
   const onValid = ({ toDo }: ToDoAddForm) => {
+    const newToDo = { id: uuidv4(), content: toDo };
+    dispatch(addToDo({ newToDo, boardId }));
     setValue("toDo", "");
   };
 
