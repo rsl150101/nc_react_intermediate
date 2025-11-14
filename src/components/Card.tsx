@@ -25,6 +25,11 @@ const CardDiv = styled.div<{ $isDraggedOver: boolean; $isDraggedFromThis: boolea
       : props.$isDraggedFromThis
       ? "#c7f9cc"
       : props.theme.cardColor};
+
+  box-shadow: ${(props) => (props.$isDraggedFromThis ? "0 4px 100px rgba(0, 0, 0, 0.15)" : "none")};
+  transition: all 0.5s ease;
+  transform: ${(props) => (props.$isDraggedOver ? "translateY(5px)" : "translateY(0)")};
+  z-index: ${(props) => (props.$isDraggedFromThis ? 10 : 1)};
 `;
 
 const Card = ({ index, content }: CardProps) => {
@@ -33,12 +38,22 @@ const Card = ({ index, content }: CardProps) => {
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const [isDraggedFromThis, setIsDraggedFromThis] = useState(false);
 
+  const THRESHOLD_RATIO = 0.1;
+
+  const isMouseWithinThreshold = (mouseY: number) => {
+    if (!ref.current) return false;
+    const rect = ref.current.getBoundingClientRect();
+    const threshold = rect.height * THRESHOLD_RATIO;
+    return mouseY > rect.top + threshold && mouseY < rect.bottom - threshold;
+  };
+
   useEffect(() => {
     if (!ref.current) return;
 
     return draggable({
       element: ref.current,
       getInitialData: () => createDragCardData(index),
+      onDragStart: () => setIsDraggedFromThis(true),
     });
   }, [index]);
 
@@ -48,8 +63,13 @@ const Card = ({ index, content }: CardProps) => {
     return dropTargetForElements({
       element: ref.current,
       getData: () => createDropCardData(index),
-      onDragStart: () => setIsDraggedFromThis(true),
-      onDragEnter: () => setIsDraggedOver(true),
+      onDrag: (event) => {
+        const mouseY = event.location.current.input.clientY;
+
+        if (isMouseWithinThreshold(mouseY)) {
+          setIsDraggedOver(true);
+        }
+      },
       onDragLeave: () => setIsDraggedOver(false),
       onDrop: (event) => {
         handleDrop(event, dispatch);
