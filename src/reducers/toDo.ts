@@ -1,11 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+import { loadFromLocalStorage } from "../utils/storage";
+
 export interface CardState {
   id: string;
   content: string;
 }
 
-interface ToDosState {
+export interface ToDosState {
   [key: string]: CardState[];
 }
 
@@ -21,11 +23,7 @@ interface AddToDoPayload {
   boardId: string;
 }
 
-const initialState: ToDosState = {
-  "to do": [],
-  doing: [],
-  done: [],
-};
+const initialState: ToDosState = loadFromLocalStorage();
 
 const toDoSlice = createSlice({
   name: "toDo",
