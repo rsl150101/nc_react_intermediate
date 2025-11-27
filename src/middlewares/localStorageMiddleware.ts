@@ -1,9 +1,9 @@
 import { Middleware } from "@reduxjs/toolkit";
 
 import { saveToLocalStorage } from "../utils/storage";
-import { addToDo, moveCard } from "../reducers/toDo";
+import { addToDo, deleteToDo, moveCard } from "../reducers/toDo";
 
-const matchers = [addToDo, moveCard];
+const matchers = [addToDo, moveCard, deleteToDo];
 
 let timer: number | undefined;
 

@@ -18,6 +18,11 @@ export interface MoveCardPayload {
   targetCardIndex?: number;
 }
 
+interface DeleteCardPayload {
+  dragBoardId: string;
+  dragCardIndex: number;
+}
+
 interface AddToDoPayload {
   newToDo: CardState;
   boardId: string;
@@ -57,9 +62,16 @@ const toDoSlice = createSlice({
 
       state[boardId].unshift(newToDo);
     },
+    deleteToDo: (state, action: PayloadAction<DeleteCardPayload>) => {
+      const { dragBoardId, dragCardIndex } = action.payload;
+
+      if (dragBoardId === null || dragCardIndex === null) return;
+
+      state[dragBoardId].splice(dragCardIndex, 1);
+    },
   },
 });
 
-export const { moveCard, addToDo } = toDoSlice.actions;
+export const { moveCard, addToDo, deleteToDo } = toDoSlice.actions;
 
 export default toDoSlice.reducer;

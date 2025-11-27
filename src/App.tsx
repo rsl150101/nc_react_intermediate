@@ -2,12 +2,14 @@ import styled from "styled-components";
 
 import Board from "./components/Board";
 import { useAppSelector } from "./store/hooks";
+import DeleteZone from "./components/DeleteZone";
 
 const WrapperDiv = styled.div`
   display: flex;
   max-width: 680px;
   width: 100%;
   margin: 0 auto;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
@@ -31,6 +33,7 @@ function App() {
             <Board key={boardId} boardId={boardId} toDos={toDos[boardId]} />
           ))}
         </BoardsDiv>
+        <DeleteZone />
       </WrapperDiv>
     </>
   );

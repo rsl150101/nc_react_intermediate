@@ -1,4 +1,4 @@
-import { moveCard } from "../../reducers/toDo";
+import { deleteToDo, moveCard } from "../../reducers/toDo";
 import { AppDispatch } from "../../store/configureStore";
 import { findDropTarget } from "./findTarget";
 import { isBoardData, isDragCardData, isDropCardData } from "./guards";
@@ -32,4 +32,16 @@ export function handleDrop(event: DropEvent, dispatch: AppDispatch) {
       targetCardIndex,
     })
   );
+}
+
+export function handleDeleteZoneDrop(event: DropEvent, dispatch: AppDispatch) {
+  const { source, location } = event;
+  const dragBoard = findDropTarget(location.initial.dropTargets, isBoardData);
+
+  if (!dragBoard || !isDragCardData(source.data)) return;
+
+  const { dragCardIndex } = source.data;
+  const dragBoardId = dragBoard.boardId;
+
+  dispatch(deleteToDo({ dragBoardId, dragCardIndex }));
 }
