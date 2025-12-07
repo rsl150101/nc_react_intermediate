@@ -8,12 +8,13 @@ import styled from "styled-components";
 
 import { useAppDispatch } from "../store/hooks";
 import { createDragCardData, createDropCardData } from "../utils/dnd/creator";
+import { isDragCardData } from "../utils/dnd/guards";
 import { handleCardDrop } from "../utils/dnd/handleDrop";
-import { CardKey } from "../utils/dnd/keys";
 import { DnDHoverState } from "../utils/dnd/types";
 
 interface CardProps {
-  index: number;
+  cardId: string;
+  boardId: string;
   content: string;
 }
 
@@ -39,7 +40,7 @@ const CardDiv = styled.div<DnDHoverState>`
   }
 `;
 
-const Card = ({ index, content }: CardProps) => {
+const Card = ({ cardId, boardId, content }: CardProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const [isDraggedOver, setIsDraggedOver] = useState(false);
@@ -59,17 +60,17 @@ const Card = ({ index, content }: CardProps) => {
 
     return draggable({
       element: ref.current,
-      getInitialData: () => createDragCardData(index),
+      getInitialData: () => createDragCardData(cardId, boardId),
       onDragStart: () => setIsDraggedFromThis(true),
     });
-  }, [index]);
+  }, [cardId, boardId]);
 
   useEffect(() => {
     if (!ref.current) return;
 
     return dropTargetForElements({
       element: ref.current,
-      getData: () => createDropCardData(index),
+      getData: () => createDropCardData(cardId, boardId),
       onDrag: (event) => {
         const mouseY = event.location.current.input.clientY;
 
@@ -79,13 +80,15 @@ const Card = ({ index, content }: CardProps) => {
       },
       onDragLeave: () => setIsDraggedOver(false),
       canDrop: ({ source }) => {
-        return (source.data as any)[CardKey];
+        if (!isDragCardData(source.data)) return false;
+
+        return source.data.cardId !== cardId;
       },
       onDrop: (event) => {
         handleCardDrop(event, dispatch);
       },
     });
-  }, [index, dispatch]);
+  }, [cardId, boardId, dispatch]);
 
   useEffect(() => {
     return monitorForElements({

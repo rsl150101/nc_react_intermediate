@@ -7,7 +7,7 @@ import {
 
 import { useAppSelector } from "../store/hooks";
 import Board from "./Board";
-import { BoardKey } from "../utils/dnd/keys";
+import { isBoardData } from "../utils/dnd/guards";
 
 const BoardsDiv = styled.div<{ $isDraggedOver: boolean }>`
   display: grid;
@@ -33,7 +33,7 @@ const Boards = () => {
         setIsDraggedOver(true);
       },
       canDrop: ({ source }) => {
-        return (source.data as any)[BoardKey];
+        return isBoardData(source.data);
       },
       onDrop: () => {
         setIsDraggedOver(false);

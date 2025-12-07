@@ -15,15 +15,15 @@ export interface ToDosState {
 }
 
 export interface MoveCardPayload {
+  dragCardId: string;
   dragBoardId: string;
-  dragCardIndex: number;
   targetBoardId: string;
-  targetCardIndex?: number;
+  targetCardId?: string;
 }
 
 interface DeleteCardPayload {
-  dragBoardId: string;
-  dragCardIndex: number;
+  boardId: string;
+  cardId: string;
 }
 
 interface AddToDoPayload {
@@ -43,25 +43,25 @@ const toDoSlice = createSlice({
   initialState,
   reducers: {
     moveCard: (state, action: PayloadAction<MoveCardPayload>) => {
-      const { dragBoardId, dragCardIndex, targetBoardId, targetCardIndex } = action.payload;
+      const { dragCardId, dragBoardId, targetBoardId, targetCardId } = action.payload;
       const sourceBoard = state.boards[dragBoardId];
       const destBoard = state.boards[targetBoardId];
 
       if (!sourceBoard || !destBoard) return;
-      if (
-        dragBoardId === targetBoardId &&
-        (dragCardIndex === targetCardIndex || dragCardIndex + 1 === targetCardIndex)
-      )
-        return;
+
+      const dragCardIndex = sourceBoard.findIndex((card) => card.id === dragCardId);
+      if (dragCardIndex === -1) return;
 
       const [dragCard] = sourceBoard.splice(dragCardIndex, 1);
 
-      let insertIndex = targetCardIndex ?? destBoard.length;
-      if (dragBoardId === targetBoardId && dragCardIndex < insertIndex && targetCardIndex) {
-        insertIndex -= 1;
+      let targetIndex = destBoard.findIndex((card) => card.id === targetCardId);
+      if (targetIndex === -1) {
+        // If the target card is not found (e.g., dropping on the board itself),
+        // or if it's the same card, place it at the end.
+        targetIndex = destBoard.length;
       }
 
-      destBoard.splice(insertIndex, 0, dragCard);
+      destBoard.splice(targetIndex, 0, dragCard);
     },
     addToDo: (state, action: PayloadAction<AddToDoPayload>) => {
       const { newToDo, boardId } = action.payload;
@@ -71,11 +71,10 @@ const toDoSlice = createSlice({
       state.boards[boardId].unshift(newToDo);
     },
     deleteToDo: (state, action: PayloadAction<DeleteCardPayload>) => {
-      const { dragBoardId, dragCardIndex } = action.payload;
-
-      if (dragBoardId === null || dragCardIndex === null) return;
-
-      state.boards[dragBoardId].splice(dragCardIndex, 1);
+      const { boardId, cardId } = action.payload;
+      const board = state.boards[boardId];
+      if (!board) return;
+      state.boards[boardId] = board.filter((card) => card.id !== cardId);
     },
     changeBoard: (state, action: PayloadAction<ChangeBoardPayload>) => {
       const { dragBoardId, targetBoardId } = action.payload;

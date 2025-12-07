@@ -1,10 +1,11 @@
 import { BoardKey, CardKey } from "./keys";
 
-export type DragCardData = { [CardKey]: true; dragCardIndex: number };
+export type DragCardData = { [CardKey]: true; cardId: string; boardId: string };
 export type DropCardData = {
   [CardKey]: true;
   type: string;
-  targetCardIndex: number;
+  cardId: string;
+  boardId: string;
 };
 export type BoardData = { [BoardKey]: true; type?: string; boardId: string };
 

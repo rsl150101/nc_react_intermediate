@@ -15,21 +15,19 @@ export function handleCardDrop(event: DropEvent, dispatch: AppDispatch) {
   const { source, location } = event;
   const targetCard = findDropTarget(location.current.dropTargets, isDropCardData);
   const targetBoard = findDropTarget(location.current.dropTargets, isBoardData);
-  const dragBoard = findDropTarget(location.initial.dropTargets, isBoardData);
 
-  if (!targetBoard || !dragBoard || !isDragCardData(source.data)) return;
+  if (!targetBoard || !isDragCardData(source.data)) return;
 
-  const { dragCardIndex } = source.data;
-  const dragBoardId = dragBoard.boardId;
+  const { cardId: dragCardId, boardId: dragBoardId } = source.data;
   const targetBoardId = targetBoard.boardId;
-  const targetCardIndex = targetCard?.targetCardIndex;
+  const targetCardId = targetCard?.cardId;
 
   dispatch(
     moveCard({
+      dragCardId,
       dragBoardId,
-      dragCardIndex,
       targetBoardId,
-      targetCardIndex,
+      targetCardId,
     })
   );
 }
@@ -48,13 +46,11 @@ export function handleBoardDrop(event: DropEvent, dispatch: AppDispatch) {
 }
 
 export function handleDeleteZoneDrop(event: DropEvent, dispatch: AppDispatch) {
-  const { source, location } = event;
-  const dragBoard = findDropTarget(location.initial.dropTargets, isBoardData);
+  const { source } = event;
 
-  if (!dragBoard || !isDragCardData(source.data)) return;
+  if (!isDragCardData(source.data)) return;
 
-  const { dragCardIndex } = source.data;
-  const dragBoardId = dragBoard.boardId;
+  const { cardId, boardId } = source.data;
 
-  dispatch(deleteToDo({ dragBoardId, dragCardIndex }));
+  dispatch(deleteToDo({ boardId, cardId }));
 }

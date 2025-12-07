@@ -15,8 +15,7 @@ import { createDragBoardData, createDropBoardData } from "../utils/dnd/creator";
 import { useAppDispatch } from "../store/hooks";
 import { handleBoardDrop, handleCardDrop } from "../utils/dnd/handleDrop";
 import { findDropTarget } from "../utils/dnd/findTarget";
-import { isDropCardData } from "../utils/dnd/guards";
-import { BoardKey, CardKey } from "../utils/dnd/keys";
+import { isBoardData, isDragCardData, isDropCardData } from "../utils/dnd/guards";
 import { DnDHoverState } from "../utils/dnd/types";
 
 const BoardDiv = styled.div<DnDHoverState>`
@@ -127,9 +126,9 @@ const Board = ({ boardId, toDos }: BoardProps) => {
 
         if (targetCard) return;
 
-        if ((event.source.data as any)[CardKey]) {
+        if (isDragCardData(event.source.data)) {
           handleCardDrop(event, dispatch);
-        } else if ((event.source.data as any)[BoardKey]) {
+        } else if (isBoardData(event.source.data)) {
           handleBoardDrop(event, dispatch);
         }
       },
@@ -162,8 +161,8 @@ const Board = ({ boardId, toDos }: BoardProps) => {
         />
       </AddForm>
       <Area $isDraggedOver={isDraggedOver} $isDraggedFromThis={isDraggedFromThis}>
-        {toDos.map((toDo, index) => (
-          <Card key={toDo.id} index={index} content={toDo.content} />
+        {toDos.map((toDo) => (
+          <Card key={toDo.id} cardId={toDo.id} boardId={boardId} content={toDo.content} />
         ))}
       </Area>
     </BoardDiv>
