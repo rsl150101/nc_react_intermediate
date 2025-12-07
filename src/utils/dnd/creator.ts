@@ -10,6 +10,10 @@ export function createDropCardData(targetCardIndex: number): DropCardData {
   return { [CardKey]: true, type: CARDDROPTYPE, targetCardIndex };
 }
 
-export function createBoardData(boardId: string): BoardData {
+export function createDragBoardData(boardId: string): BoardData {
+  return { [BoardKey]: true, boardId };
+}
+
+export function createDropBoardData(boardId: string): BoardData {
   return { [BoardKey]: true, type: BOARDDROPTYPE, boardId };
 }

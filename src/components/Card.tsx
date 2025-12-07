@@ -8,14 +8,16 @@ import styled from "styled-components";
 
 import { useAppDispatch } from "../store/hooks";
 import { createDragCardData, createDropCardData } from "../utils/dnd/creator";
-import { handleDrop } from "../utils/dnd/handleDrop";
+import { handleCardDrop } from "../utils/dnd/handleDrop";
+import { CardKey } from "../utils/dnd/keys";
+import { DnDHoverState } from "../utils/dnd/types";
 
 interface CardProps {
   index: number;
   content: string;
 }
 
-const CardDiv = styled.div<{ $isDraggedOver: boolean; $isDraggedFromThis: boolean }>`
+const CardDiv = styled.div<DnDHoverState>`
   border-radius: 5px;
   margin-bottom: 5px;
   padding: 10px;
@@ -30,6 +32,11 @@ const CardDiv = styled.div<{ $isDraggedOver: boolean; $isDraggedFromThis: boolea
   transition: all 0.5s ease;
   transform: ${(props) => (props.$isDraggedOver ? "translateY(5px)" : "translateY(0)")};
   z-index: ${(props) => (props.$isDraggedFromThis ? 10 : 1)};
+
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
 `;
 
 const Card = ({ index, content }: CardProps) => {
@@ -71,8 +78,11 @@ const Card = ({ index, content }: CardProps) => {
         }
       },
       onDragLeave: () => setIsDraggedOver(false),
+      canDrop: ({ source }) => {
+        return (source.data as any)[CardKey];
+      },
       onDrop: (event) => {
-        handleDrop(event, dispatch);
+        handleCardDrop(event, dispatch);
       },
     });
   }, [index, dispatch]);

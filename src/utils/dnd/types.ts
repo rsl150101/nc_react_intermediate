@@ -6,4 +6,6 @@ export type DropCardData = {
   type: string;
   targetCardIndex: number;
 };
-export type BoardData = { [BoardKey]: true; type: string; boardId: string };
+export type BoardData = { [BoardKey]: true; type?: string; boardId: string };
+
+export type DnDHoverState = { $isDraggedOver: boolean; $isDraggedFromThis: boolean };

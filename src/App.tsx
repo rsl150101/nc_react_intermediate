@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
-import Board from "./components/Board";
-import { useAppSelector } from "./store/hooks";
 import DeleteZone from "./components/DeleteZone";
+import Boards from "./components/Boards";
 
 const WrapperDiv = styled.div`
   display: flex;
@@ -15,24 +14,11 @@ const WrapperDiv = styled.div`
   height: 100vh;
 `;
 
-const BoardsDiv = styled.div`
-  display: grid;
-  width: 100%;
-  gap: 10px;
-  grid-template-columns: repeat(3, 1fr);
-`;
-
 function App() {
-  const toDos = useAppSelector((state) => state.toDo);
-
   return (
     <>
       <WrapperDiv>
-        <BoardsDiv>
-          {Object.keys(toDos).map((boardId) => (
-            <Board key={boardId} boardId={boardId} toDos={toDos[boardId]} />
-          ))}
-        </BoardsDiv>
+        <Boards />
         <DeleteZone />
       </WrapperDiv>
     </>

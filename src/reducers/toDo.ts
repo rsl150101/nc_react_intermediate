@@ -8,7 +8,10 @@ export interface CardState {
 }
 
 export interface ToDosState {
-  [key: string]: CardState[];
+  boards: {
+    [key: string]: CardState[];
+  };
+  boardOrder: string[];
 }
 
 export interface MoveCardPayload {
@@ -28,6 +31,11 @@ interface AddToDoPayload {
   boardId: string;
 }
 
+interface ChangeBoardPayload {
+  dragBoardId: string;
+  targetBoardId: string;
+}
+
 const initialState: ToDosState = loadFromLocalStorage();
 
 const toDoSlice = createSlice({
@@ -36,8 +44,8 @@ const toDoSlice = createSlice({
   reducers: {
     moveCard: (state, action: PayloadAction<MoveCardPayload>) => {
       const { dragBoardId, dragCardIndex, targetBoardId, targetCardIndex } = action.payload;
-      const sourceBoard = state[dragBoardId];
-      const destBoard = state[targetBoardId];
+      const sourceBoard = state.boards[dragBoardId];
+      const destBoard = state.boards[targetBoardId];
 
       if (!sourceBoard || !destBoard) return;
       if (
@@ -60,18 +68,27 @@ const toDoSlice = createSlice({
 
       if (!newToDo || !boardId) return;
 
-      state[boardId].unshift(newToDo);
+      state.boards[boardId].unshift(newToDo);
     },
     deleteToDo: (state, action: PayloadAction<DeleteCardPayload>) => {
       const { dragBoardId, dragCardIndex } = action.payload;
 
       if (dragBoardId === null || dragCardIndex === null) return;
 
-      state[dragBoardId].splice(dragCardIndex, 1);
+      state.boards[dragBoardId].splice(dragCardIndex, 1);
+    },
+    changeBoard: (state, action: PayloadAction<ChangeBoardPayload>) => {
+      const { dragBoardId, targetBoardId } = action.payload;
+      const { boardOrder } = state;
+
+      const srcIdx = boardOrder.findIndex((boardId) => boardId === dragBoardId);
+      const desIdx = boardOrder.findIndex((boardId) => boardId === targetBoardId);
+
+      [boardOrder[srcIdx], boardOrder[desIdx]] = [boardOrder[desIdx], boardOrder[srcIdx]];
     },
   },
 });
 
-export const { moveCard, addToDo, deleteToDo } = toDoSlice.actions;
+export const { moveCard, addToDo, deleteToDo, changeBoard } = toDoSlice.actions;
 
 export default toDoSlice.reducer;
