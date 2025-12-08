@@ -1,12 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { ThemeProvider } from "styled-components";
-import { Provider } from "react-redux";
 import { createGlobalStyle } from "styled-components";
 
 import App from "./App";
 import { theme } from "./theme";
-import { store } from "./store/configureStore";
 
 const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,
@@ -62,9 +60,9 @@ table {
 body {
   font-weight: 300;
   font-family: "Open Sans", serif;
-  background-color:${(props) => props.theme.bgColor};
   color:black;
   line-height:1.2;
+  background: linear-gradient(135deg, #e09, #d0e);
 }
 a {
   text-decoration:none;
@@ -72,16 +70,12 @@ a {
 }
 `;
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <App />
-      </ThemeProvider>
-    </Provider>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
