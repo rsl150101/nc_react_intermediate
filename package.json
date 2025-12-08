@@ -12,6 +12,7 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "motion": "^12.23.25",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "react-hook-form": "^7.62.0",

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { motion } from "motion/react";
 
 const WrapperDiv = styled.div`
   width: 100vw;
@@ -20,6 +21,7 @@ function App() {
   return (
     <WrapperDiv>
       <Box />
+      <motion.div></motion.div>
     </WrapperDiv>
   );
 }
