@@ -20,7 +20,7 @@ import { DnDHoverState } from "../utils/dnd/types";
 
 const BoardDiv = styled.div<DnDHoverState>`
   padding: 30px 10px 20px 10px;
-  background-color: ${(props) => (props.$isDraggedOver ? "#e2e4e9" : props.theme.boardColor)};
+  background-color: ${(props) => (props.$isDraggedOver ? "#e9ebf3" : props.theme.boardColor)};
   border-radius: 5px;
   min-height: 200px;
   display: flex;

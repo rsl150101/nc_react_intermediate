@@ -85,9 +85,15 @@ const toDoSlice = createSlice({
 
       [boardOrder[srcIdx], boardOrder[desIdx]] = [boardOrder[desIdx], boardOrder[srcIdx]];
     },
+    addBoard: (state, action: PayloadAction<string>) => {
+      const newBoardId = action.payload.toLowerCase();
+      if (state.boards[newBoardId]) return;
+      state.boards[newBoardId] = [];
+      state.boardOrder.push(newBoardId);
+    },
   },
 });
 
-export const { moveCard, addToDo, deleteToDo, changeBoard } = toDoSlice.actions;
+export const { moveCard, addToDo, deleteToDo, changeBoard, addBoard } = toDoSlice.actions;
 
 export default toDoSlice.reducer;

@@ -8,14 +8,23 @@ import {
 import { useAppSelector } from "../store/hooks";
 import Board from "./Board";
 import { isBoardData } from "../utils/dnd/guards";
+import AddBoardBtn from "./AddBoardButton";
+
+const WrapperDiv = styled.div`
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+  border-radius: 5px;
+`;
 
 const BoardsDiv = styled.div<{ $isDraggedOver: boolean }>`
+  flex-grow: 1;
   display: grid;
   width: 100%;
   gap: 10px;
   grid-template-columns: repeat(3, 1fr);
-  background-color: ${(props) => (props.$isDraggedOver ? "#adb5bd" : "transparent")};
-  outline: ${(props) => (props.$isDraggedOver ? "5px solid #adb5bd" : "none")};
+  grid-auto-rows: minmax(150px, auto);
   border-radius: 5px;
 `;
 
@@ -50,11 +59,14 @@ const Boards = () => {
   }, []);
 
   return (
-    <BoardsDiv ref={ref} $isDraggedOver={isDraggedOver}>
-      {boardOrder.map((boardId) => (
-        <Board key={boardId} boardId={boardId} toDos={toDos[boardId]} />
-      ))}
-    </BoardsDiv>
+    <WrapperDiv>
+      <BoardsDiv ref={ref} $isDraggedOver={isDraggedOver}>
+        {boardOrder.map((boardId) => (
+          <Board key={boardId} boardId={boardId} toDos={toDos[boardId]} />
+        ))}
+      </BoardsDiv>
+      <AddBoardBtn />
+    </WrapperDiv>
   );
 };
 
