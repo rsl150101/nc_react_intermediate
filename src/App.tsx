@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { motion, useMotionValue, useMotionValueEvent } from "motion/react";
+import { motion, useMotionValue, useTransform } from "motion/react";
 
 const WrapperDiv = styled.div`
   width: 100vw;
@@ -19,14 +19,11 @@ const Box = styled(motion.div)`
 
 function App() {
   const x = useMotionValue(0);
-
-  useMotionValueEvent(x, "change", (latest) => {
-    console.log(latest);
-  });
+  const scale = useTransform(x, [-800, 0, 800], [2, 1, 0.1]);
 
   return (
     <WrapperDiv>
-      <Box style={{ x }} drag="x" dragSnapToOrigin />
+      <Box style={{ x, scale }} drag="x" dragSnapToOrigin />
     </WrapperDiv>
   );
 }
