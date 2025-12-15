@@ -1,9 +1,10 @@
 import styled from "styled-components";
-import { motion, useMotionValue, useTransform } from "motion/react";
+import { motion, useMotionValue, useScroll, useTransform } from "motion/react";
+import { useEffect, useState } from "react";
 
-const WrapperDiv = styled.div`
+const WrapperDiv = styled(motion.div)`
   width: 100vw;
-  height: 100vh;
+  height: 200vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,12 +19,35 @@ const Box = styled(motion.div)`
 `;
 
 function App() {
+  const [windowWidthSize, setWindowWidthSize] = useState(window.innerWidth / 2);
   const x = useMotionValue(0);
-  const scale = useTransform(x, [-800, 0, 800], [2, 1, 0.1]);
+  const rotateZ = useTransform(x, [-windowWidthSize, 0, windowWidthSize], [-360, 0, 360]);
+  const gradient = useTransform(
+    x,
+    [-windowWidthSize, windowWidthSize],
+    [
+      "linear-gradient(135deg, rgb(0,210,238), rgb(0,83,238))",
+      "linear-gradient(135deg, rgb(0,238,155), rgb(67, 238, 0))",
+    ]
+  );
+  const { scrollYProgress } = useScroll();
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 2]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidthSize(window.innerWidth / 2);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
-    <WrapperDiv>
-      <Box style={{ x, scale }} drag="x" dragSnapToOrigin />
+    <WrapperDiv style={{ background: gradient }}>
+      <Box style={{ x, rotateZ, scale }} drag="x" dragSnapToOrigin />
     </WrapperDiv>
   );
 }
