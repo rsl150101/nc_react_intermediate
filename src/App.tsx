@@ -1,53 +1,46 @@
 import styled from "styled-components";
-import { motion, useMotionValue, useScroll, useTransform } from "motion/react";
-import { useEffect, useState } from "react";
+import { motion, type Variants } from "motion/react";
 
 const WrapperDiv = styled(motion.div)`
   width: 100vw;
-  height: 200vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const Box = styled(motion.div)`
-  width: 200px;
-  height: 200px;
-  background-color: rgba(255, 255, 255, 1);
-  border-radius: 40px;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+const HtmlLogoSvg = styled.svg`
+  width: 300px;
+  height: 300px;
+  path {
+    stroke: white;
+    stroke-width: 2;
+  }
 `;
 
+const svgVariants: Variants = {
+  start: {
+    pathLength: 0,
+    fill: "rgba(255,255,255,0)",
+  },
+  end: {
+    pathLength: 1,
+    fill: "rgba(255,255,255,1)",
+  },
+};
+
 function App() {
-  const [windowWidthSize, setWindowWidthSize] = useState(window.innerWidth / 2);
-  const x = useMotionValue(0);
-  const rotateZ = useTransform(x, [-windowWidthSize, 0, windowWidthSize], [-360, 0, 360]);
-  const gradient = useTransform(
-    x,
-    [-windowWidthSize, windowWidthSize],
-    [
-      "linear-gradient(135deg, rgb(0,210,238), rgb(0,83,238))",
-      "linear-gradient(135deg, rgb(0,238,155), rgb(67, 238, 0))",
-    ]
-  );
-  const { scrollYProgress } = useScroll();
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 2]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidthSize(window.innerWidth / 2);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   return (
-    <WrapperDiv style={{ background: gradient }}>
-      <Box style={{ x, rotateZ, scale }} drag="x" dragSnapToOrigin />
+    <WrapperDiv>
+      <HtmlLogoSvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+        <motion.path
+          variants={svgVariants}
+          initial="start"
+          animate="end"
+          transition={{ default: { duration: 5 }, fill: { duration: 1, delay: 2 } }}
+          d="M0 32L34.9 427.8 191.5 480 349.1 427.8 384 32 0 32zM308.2 159.9l-183.8 0 4.1 49.4 175.6 0-13.6 148.4-97.9 27 0 .3-1.1 0-98.7-27.3-6-75.8 47.7 0 3.5 38.1 53.5 14.5 53.7-14.5 6-62.2-166.9 0-12.8-145.6 241.1 0-4.4 47.7z"
+        />
+      </HtmlLogoSvg>
     </WrapperDiv>
   );
 }
