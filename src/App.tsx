@@ -25,35 +25,57 @@ const Box = styled(motion.div)`
 `;
 
 const boxVariants: Variants = {
-  invisible: { x: 500, opacity: 0, scale: 0 },
-  visible: { x: 0, opacity: 1, scale: 1, transition: { duration: 1 } },
-  hidden: { x: -500, opacity: 0, scale: 0, transition: { duration: 1 } },
+  entry: (isBack: boolean) => ({ x: isBack ? -500 : 500, opacity: 0, scale: 0 }),
+  center: { x: 0, opacity: 1, scale: 1, transition: { duration: 0.3 } },
+  exit: (isBack: boolean) => ({
+    x: isBack ? 500 : -500,
+    opacity: 0,
+    scale: 0,
+    transition: { duration: 0.3 },
+    rotateX: 90,
+  }),
 };
 
 function App() {
   const [visible, setVisible] = useState(1);
+  const [isBack, setIsBack] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
-  const nextSlider = () => setVisible((prev) => (prev === 10 ? 10 : prev + 1));
-  const prevSlider = () => setVisible((prev) => (prev === 1 ? 1 : prev - 1));
+  const nextSlider = () => {
+    if (leaving) return;
+    setLeaving(true);
+    setIsBack(false);
+    setVisible((prev) => (prev === 10 ? 10 : prev + 1));
+    if (visible === 10) setLeaving(false);
+  };
+
+  const prevSlider = () => {
+    if (leaving) return;
+    setLeaving(true);
+    setIsBack(true);
+    setVisible((prev) => (prev === 1 ? 1 : prev - 1));
+    if (visible === 1) setLeaving(false);
+  };
+
+  const onAnimationEnd = () => {
+    setLeaving(false);
+  };
 
   return (
     <WrapperDiv>
       <button onClick={prevSlider}>prev</button>
       <button onClick={nextSlider}>next</button>
-      <AnimatePresence>
-        {Array.from({ length: 10 }, (_v, i) => i + 1).map((i) =>
-          i === visible ? (
-            <Box
-              variants={boxVariants}
-              initial="invisible"
-              animate={"visible"}
-              exit="hidden"
-              key={i}
-            >
-              {i}
-            </Box>
-          ) : null
-        )}
+      <AnimatePresence custom={isBack} onExitComplete={onAnimationEnd}>
+        <Box
+          custom={isBack}
+          variants={boxVariants}
+          initial="entry"
+          animate="center"
+          exit="exit"
+          key={visible}
+        >
+          {visible}
+        </Box>
       </AnimatePresence>
     </WrapperDiv>
   );
