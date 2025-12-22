@@ -10,14 +10,14 @@ const WrapperDiv = styled(motion.div)`
   align-items: center;
 `;
 
-const Box = styled(motion.div)<{ $clicked: boolean }>`
+const Box = styled(motion.div)`
   width: 400px;
   height: 400px;
   background-color: rgba(255, 255, 255, 1);
   border-radius: 40px;
   display: flex;
-  justify-content: ${(props) => (props.$clicked ? "center" : "flex-start")};
-  align-items: ${(props) => (props.$clicked ? "center" : "flex-start")};
+  justify-content: center;
+  align-items: center;
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
 `;
 
@@ -38,8 +38,9 @@ function App() {
 
   return (
     <WrapperDiv onClick={handleClicked}>
-      <Box $clicked={clicked}>
-        <Circle layout />
+      <Box>{!clicked ? <Circle layoutId="circle" style={{ borderRadius: "50%" }} /> : null}</Box>
+      <Box>
+        {clicked ? <Circle layoutId="circle" style={{ borderRadius: 0, scale: 1.5 }} /> : null}
       </Box>
     </WrapperDiv>
   );
