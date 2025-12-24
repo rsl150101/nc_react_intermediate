@@ -55,24 +55,25 @@ const overlayVariants: Variants = {
 };
 
 function App() {
-  const [clicked, setClicked] = useState(false);
-
-  const handleClicked = () => {
-    setClicked((prev) => !prev);
-  };
+  const [clickedId, setClickedId] = useState<null | string>(null);
 
   return (
-    <WrapperDiv onClick={handleClicked}>
+    <WrapperDiv>
       <GridDiv>
-        <Box layoutId="clicked" />
-        <Box />
-        <Box />
-        <Box />
+        {Array.from({ length: 4 }, (_v, i) => String(i + 1)).map((v) => (
+          <Box onClick={() => setClickedId(v)} key={v} layoutId={v} />
+        ))}
       </GridDiv>
       <AnimatePresence>
-        {clicked ? (
-          <Overlay variants={overlayVariants} initial="hidden" animate="visible" exit="exit">
-            <OverlayBox layoutId="clicked" />
+        {clickedId ? (
+          <Overlay
+            onClick={() => setClickedId(null)}
+            variants={overlayVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <OverlayBox layoutId={clickedId} />
           </Overlay>
         ) : null}
       </AnimatePresence>
