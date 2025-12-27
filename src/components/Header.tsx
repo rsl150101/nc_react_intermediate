@@ -1,9 +1,16 @@
 import styled from "styled-components";
-import { motion, stagger, type Variants } from "motion/react";
+import {
+  motion,
+  stagger,
+  useAnimation,
+  useMotionValueEvent,
+  useScroll,
+  type Variants,
+} from "motion/react";
 import { Link, useMatch } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const Nav = styled.nav`
+const Nav = styled(motion.nav)`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -67,20 +74,24 @@ const SearchDiv = styled.div`
 const SearchSVG = styled(motion.svg)`
   height: 25px;
   fill: ${(props) => props.theme.white.lighter};
+  cursor: pointer;
 `;
 
 const SearchInput = styled(motion.input)`
   position: absolute;
-  left: -150px;
-  height: 30px;
+  right: 0px;
+  z-index: -1;
+  height: 40px;
   border: 1px solid ${(props) => props.theme.white.lighter};
   outline: none;
   border-radius: 5px;
   transform-origin: right center;
-  min-width: 200px;
-  padding: 0 5px;
+  min-width: 230px;
+  padding: 5 10px;
+  padding-left: 40px;
+  font-size: 16;
   color: ${(props) => props.theme.white.lighter};
-  background-color: ${(props) => props.theme.black.darker};
+  background-color: transparent;
 `;
 
 const logoPaths = [
@@ -92,6 +103,15 @@ const logoPaths = [
   "M475,96 L475,0 L500,0 L500,96 Z", // I
   "M515,100 L545,45 L515,0 L540,0 L560,35 L580,0 L605,0 L575,45 L605,100 L580,100 L560,60 L540,100 Z", // X
 ];
+
+const navVariants: Variants = {
+  top: {
+    backgroundColor: "rgba(0,0,0,0)",
+  },
+  scroll: {
+    backgroundColor: "rgba(0,0,0,1)",
+  },
+};
 
 const logoVariants: Variants = {
   start: {
@@ -125,17 +145,42 @@ function Header() {
   const tvMatch = useMatch("tv");
   const [ready, setReady] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const { scrollY } = useScroll();
+  const navScrollControls = useAnimation();
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setReady(true);
   }, []);
+
+  useEffect(() => {
+    if (searchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (scrollY.get() > 80) {
+      navScrollControls.start("scroll");
+    } else {
+      navScrollControls.start("top");
+    }
+  }, [scrollY, navScrollControls]);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (latest > 80) {
+      navScrollControls.start("scroll");
+    } else {
+      navScrollControls.start("top");
+    }
+  });
 
   const toggleSearch = () => setSearchOpen((prev) => !prev);
 
   const barTransition = ready ? {} : { duration: 0 };
 
   return (
-    <Nav>
+    <Nav variants={navVariants} initial="top" animate={navScrollControls}>
       <Col>
         <Logo
           xmlns="http://www.w3.org/2000/svg"
@@ -169,15 +214,17 @@ function Header() {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 512 512"
             onClick={toggleSearch}
-            animate={{ x: searchOpen ? -180 : 0 }}
+            animate={{ x: searchOpen ? -195 : 0 }}
+            transition={{ ease: "linear" }}
           >
             <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376C296.3 401.1 253.9 416 208 416 93.1 416 0 322.9 0 208S93.1 0 208 0 416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
           </SearchSVG>
           <SearchInput
+            ref={searchInputRef}
             placeholder="Search for movie or tv show..."
             initial={{ opacity: 0 }}
             animate={{ scaleX: searchOpen ? 1 : 0, opacity: searchOpen ? 1 : 0 }}
-            transition={{ opacity: { duration: 0.2 } }}
+            transition={{ opacity: { duration: 0.2 }, ease: "linear" }}
           />
         </SearchDiv>
       </Col>
