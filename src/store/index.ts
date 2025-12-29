@@ -1,0 +1,14 @@
+import { configureStore } from "@reduxjs/toolkit";
+import tmdbApi from "../api/tmdbApi";
+
+export const store = configureStore({
+  reducer: {
+    [tmdbApi.reducerPath]: tmdbApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(tmdbApi.middleware),
+  devTools: true,
+});
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+export type AppStore = typeof store;

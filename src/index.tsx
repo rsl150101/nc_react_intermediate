@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 
 import App from "./App";
 import { theme } from "./theme";
-import { store } from "./store/configureStore";
+import { store } from "./store";
 
 const GlobalStyle = createGlobalStyle`
 html, body, div, span, applet, object, iframe,

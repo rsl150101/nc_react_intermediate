@@ -8,7 +8,8 @@ import {
   type Variants,
 } from "motion/react";
 import { Link, useMatch } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
+import { useLayoutReady } from "../hooks/useLayoutReady";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -143,15 +144,11 @@ const letterVariants: Variants = {
 function Header() {
   const homeMatch = useMatch("/");
   const tvMatch = useMatch("tv");
-  const [ready, setReady] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { scrollY } = useScroll();
   const navScrollControls = useAnimation();
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setReady(true);
-  }, []);
+  const isLayoutReady = useLayoutReady();
 
   useEffect(() => {
     if (searchOpen && searchInputRef.current) {
@@ -177,7 +174,7 @@ function Header() {
 
   const toggleSearch = () => setSearchOpen((prev) => !prev);
 
-  const barTransition = ready ? {} : { duration: 0 };
+  const barTransition = isLayoutReady ? {} : { duration: 0 };
 
   return (
     <Nav variants={navVariants} initial="top" animate={navScrollControls}>
@@ -232,4 +229,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default memo(Header);
