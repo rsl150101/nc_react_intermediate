@@ -62,9 +62,9 @@ table {
 body {
   font-weight: 300;
   font-family: "Open Sans", serif;
-  color:black;
+  color:${(props) => props.theme.white.darker};
   line-height:1.2;
-  background: linear-gradient(135deg, #e09, #d0e);
+  background-color: ${(props) => props.theme.black.darker};
 }
 a {
   text-decoration:none;
