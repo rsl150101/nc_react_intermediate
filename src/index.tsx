@@ -70,6 +70,9 @@ a {
   text-decoration:none;
   color:inherit;
 }
+::-webkit-scrollbar{
+  display: none;
+}
 `;
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
