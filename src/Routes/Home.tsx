@@ -50,26 +50,37 @@ const SliderRow = styled(motion.div)`
   gap: 10px;
   position: absolute;
 `;
-const SliderBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
+const SliderBox = styled.div<{ $bgPhoto: string }>`
+  background-image: url(${(props) => props.$bgPhoto});
+  background-size: cover;
+  background-position: center center;
   font-size: 66px;
-  color: red;
 `;
 
 const sliderVariants: Variants = {
-  hidden: { x: window.outerWidth + 20 },
+  hidden: { x: "calc(100% + 10px)" },
   visible: { x: 0 },
-  exit: { x: -window.outerWidth - 20 },
+  exit: { x: "calc(-100% - 10px)" },
 };
+
+const offset = 6;
 
 function Home() {
   const { data, isLoading } = useGetNowPlayingQuery();
   const [index, setIndex] = useState(0);
+  const [leaving, setLeaving] = useState(false);
 
-  const increaseIndex = () => setIndex((prev) => prev + 1);
+  const increaseIndex = () => {
+    if (leaving) return;
+    setLeaving(true);
+    if (data) {
+      const totalMoviesLength = data.results.length - 1;
+      const maxIndex = Math.floor(totalMoviesLength / offset) - 1;
+      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+    }
+  };
+
+  const toggleLeaving = () => setLeaving((prev) => !prev);
 
   return (
     <WrapperDiv>
@@ -85,18 +96,24 @@ function Home() {
             <MovieOverview>{data?.results[0].overview}</MovieOverview>
           </BannerDiv>
           <MovieSliderDiv>
-            <AnimatePresence>
+            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <SliderRow
                 key={index}
                 variants={sliderVariants}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                transition={{ type: "tween" }}
+                transition={{ type: "tween", duration: 1 }}
               >
-                {Array.from({ length: 6 }, (_v, i) => i + 1).map((i) => (
-                  <SliderBox>{i}</SliderBox>
-                ))}
+                {data?.results
+                  .slice(1)
+                  .slice(index * offset, index * offset + offset)
+                  .map((movie) => (
+                    <SliderBox
+                      key={movie.id}
+                      $bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                    ></SliderBox>
+                  ))}
               </SliderRow>
             </AnimatePresence>
           </MovieSliderDiv>
