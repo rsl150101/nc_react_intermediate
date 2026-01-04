@@ -56,11 +56,25 @@ const SliderRow = styled(motion.div)`
     transform-origin: right center;
   }
 `;
+
 const SliderBox = styled(motion.div)<{ $bgPhoto: string }>`
   background-image: url(${(props) => props.$bgPhoto});
   background-size: cover;
   background-position: center center;
   font-size: 66px;
+`;
+
+const SliderBoxInfo = styled(motion.div)`
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
 `;
 
 const sliderVariants: Variants = {
@@ -72,6 +86,16 @@ const sliderVariants: Variants = {
 const sliderBoxVariants: Variants = {
   hover: {
     scale: 1.3,
+    transition: {
+      delay: 0.5,
+      duration: 0.3,
+    },
+  },
+};
+
+const sliderBoxInfoVariants: Variants = {
+  hover: {
+    opacity: 1,
     transition: {
       delay: 0.5,
       duration: 0.3,
@@ -131,7 +155,11 @@ function Home() {
                       variants={sliderBoxVariants}
                       whileHover="hover"
                       transition={{ type: "tween" }}
-                    ></SliderBox>
+                    >
+                      <SliderBoxInfo variants={sliderBoxInfoVariants}>
+                        <h4>{movie.title}</h4>
+                      </SliderBoxInfo>
+                    </SliderBox>
                   ))}
               </SliderRow>
             </AnimatePresence>
