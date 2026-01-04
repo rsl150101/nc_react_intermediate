@@ -90,6 +90,15 @@ const SliderBoxModal = styled(motion.div)`
   margin: 0 auto;
 `;
 
+const Overlay = styled(motion.div)`
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+`;
+
 const sliderVariants: Variants = {
   hidden: { x: "calc(100% + 10px)" },
   visible: { x: 0 },
@@ -141,6 +150,10 @@ function Home() {
     navigate(`/movies/${movieId}`);
   };
 
+  const handleClickOverlay = () => {
+    navigate("/", { replace: true });
+  };
+
   return (
     <WrapperDiv>
       {isLoading ? (
@@ -187,7 +200,14 @@ function Home() {
           </MovieSliderDiv>
           <AnimatePresence>
             {movieModalMatch ? (
-              <SliderBoxModal layoutId={movieModalMatch.params.movieId}></SliderBoxModal>
+              <>
+                <Overlay
+                  onClick={handleClickOverlay}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                />
+                <SliderBoxModal layoutId={movieModalMatch.params.movieId}></SliderBoxModal>
+              </>
             ) : null}
           </AnimatePresence>
         </>
