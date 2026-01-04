@@ -49,8 +49,14 @@ const SliderRow = styled(motion.div)`
   grid-template-columns: repeat(6, 1fr);
   gap: 10px;
   position: absolute;
+  :first-child {
+    transform-origin: left center;
+  }
+  :last-child {
+    transform-origin: right center;
+  }
 `;
-const SliderBox = styled.div<{ $bgPhoto: string }>`
+const SliderBox = styled(motion.div)<{ $bgPhoto: string }>`
   background-image: url(${(props) => props.$bgPhoto});
   background-size: cover;
   background-position: center center;
@@ -61,6 +67,16 @@ const sliderVariants: Variants = {
   hidden: { x: "calc(100% + 10px)" },
   visible: { x: 0 },
   exit: { x: "calc(-100% - 10px)" },
+};
+
+const sliderBoxVariants: Variants = {
+  hover: {
+    scale: 1.3,
+    transition: {
+      delay: 0.5,
+      duration: 0.3,
+    },
+  },
 };
 
 const offset = 6;
@@ -112,6 +128,9 @@ function Home() {
                     <SliderBox
                       key={movie.id}
                       $bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                      variants={sliderBoxVariants}
+                      whileHover="hover"
+                      transition={{ type: "tween" }}
                     ></SliderBox>
                   ))}
               </SliderRow>
