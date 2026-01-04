@@ -3,6 +3,7 @@ import { useGetNowPlayingQuery } from "../features/movies/moviesApi";
 import { makeImagePath } from "../utils/imageUtils";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useState } from "react";
+import { useMatch, useNavigate } from "react-router-dom";
 
 const WrapperDiv = styled.div`
   background-color: ${(props) => props.theme.black.darker};
@@ -62,6 +63,7 @@ const SliderBox = styled(motion.div)<{ $bgPhoto: string }>`
   background-size: cover;
   background-position: center center;
   font-size: 66px;
+  cursor: pointer;
 `;
 
 const SliderBoxInfo = styled(motion.div)`
@@ -75,6 +77,17 @@ const SliderBoxInfo = styled(motion.div)`
     text-align: center;
     font-size: 18px;
   }
+`;
+
+const SliderBoxModal = styled(motion.div)`
+  position: fixed;
+  width: 40vw;
+  height: 80vh;
+  background-color: red;
+  top: 100px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
 `;
 
 const sliderVariants: Variants = {
@@ -109,6 +122,8 @@ function Home() {
   const { data, isLoading } = useGetNowPlayingQuery();
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const movieModalMatch = useMatch("/movies/:movieId");
+  const navigate = useNavigate();
 
   const increaseIndex = () => {
     if (leaving) return;
@@ -121,6 +136,10 @@ function Home() {
   };
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
+
+  const handleClickSliderBox = (movieId: number) => () => {
+    navigate(`/movies/${movieId}`);
+  };
 
   return (
     <WrapperDiv>
@@ -155,6 +174,8 @@ function Home() {
                       variants={sliderBoxVariants}
                       whileHover="hover"
                       transition={{ type: "tween" }}
+                      onClick={handleClickSliderBox(movie.id)}
+                      layoutId={String(movie.id)}
                     >
                       <SliderBoxInfo variants={sliderBoxInfoVariants}>
                         <h4>{movie.title}</h4>
@@ -164,6 +185,11 @@ function Home() {
               </SliderRow>
             </AnimatePresence>
           </MovieSliderDiv>
+          <AnimatePresence>
+            {movieModalMatch ? (
+              <SliderBoxModal layoutId={movieModalMatch.params.movieId}></SliderBoxModal>
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </WrapperDiv>
