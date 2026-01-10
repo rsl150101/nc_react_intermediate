@@ -7,9 +7,10 @@ import {
   useScroll,
   type Variants,
 } from "motion/react";
-import { Link, useMatch } from "react-router-dom";
-import { memo, useEffect, useRef, useState } from "react";
+import { Link, useMatch, useNavigate } from "react-router-dom";
+import { memo, useEffect, useState } from "react";
 import { useLayoutReady } from "../hooks/useLayoutReady";
+import { useForm } from "react-hook-form";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -65,7 +66,7 @@ const ItemBottomBar = styled(motion.div)`
   bottom: -5px;
 `;
 
-const SearchDiv = styled.div`
+const SearchForm = styled.form`
   color: ${(props) => props.theme.white.lighter};
   display: flex;
   align-items: center;
@@ -141,20 +142,19 @@ const letterVariants: Variants = {
   },
 };
 
+interface IForm {
+  keyword: string;
+}
+
 function Header() {
   const homeMatch = useMatch("/");
   const tvMatch = useMatch("tv");
   const [searchOpen, setSearchOpen] = useState(false);
   const { scrollY } = useScroll();
   const navScrollControls = useAnimation();
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const isLayoutReady = useLayoutReady();
-
-  useEffect(() => {
-    if (searchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [searchOpen]);
+  const { register, handleSubmit, setFocus, setValue } = useForm<IForm>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (scrollY.get() > 80) {
@@ -172,7 +172,17 @@ function Header() {
     }
   });
 
-  const toggleSearch = () => setSearchOpen((prev) => !prev);
+  const toggleSearch = () => {
+    if (!searchOpen) {
+      setFocus("keyword");
+      setValue("keyword", "");
+    }
+    setSearchOpen((prev) => !prev);
+  };
+
+  const onVaild = (data: IForm) => {
+    navigate(`/search?keyword=${data.keyword}`);
+  };
 
   const barTransition = isLayoutReady ? {} : { duration: 0 };
 
@@ -206,7 +216,7 @@ function Header() {
         </Items>
       </Col>
       <Col>
-        <SearchDiv>
+        <SearchForm onSubmit={handleSubmit(onVaild)}>
           <SearchSVG
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 512 512"
@@ -217,13 +227,13 @@ function Header() {
             <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376C296.3 401.1 253.9 416 208 416 93.1 416 0 322.9 0 208S93.1 0 208 0 416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
           </SearchSVG>
           <SearchInput
-            ref={searchInputRef}
             placeholder="Search for movie or tv show..."
             initial={{ opacity: 0 }}
             animate={{ scaleX: searchOpen ? 1 : 0, opacity: searchOpen ? 1 : 0 }}
             transition={{ opacity: { duration: 0.2 }, ease: "linear" }}
+            {...register("keyword", { required: true, minLength: 2 })}
           />
-        </SearchDiv>
+        </SearchForm>
       </Col>
     </Nav>
   );
